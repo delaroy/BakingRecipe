@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BakingApp</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_widget">Baking Recipe</string>
+    <string name="label_recipe_pending">recipe pending</string>
+</resources>
