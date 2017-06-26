@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="recipe_list_background">#cccccc</color>
+    <color name="primary_light">#FFCDD2</color>
     <color name="dark_gray">#cccccc</color>
     <color name="colorGray">#888888</color>
     <color name="text">#444444</color>

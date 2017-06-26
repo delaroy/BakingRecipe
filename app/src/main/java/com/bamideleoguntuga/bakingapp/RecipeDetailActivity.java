@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,13 +18,8 @@ import com.bamideleoguntuga.bakingapp.adapter.IngredientAdapter;
 import com.bamideleoguntuga.bakingapp.model.Ingredient;
 import com.bamideleoguntuga.bakingapp.model.Recipe;
 import com.bamideleoguntuga.bakingapp.model.Step;
-import com.bamideleoguntuga.bakingapp.recipewidget.RecipeWidget;
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,20 +33,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
     Recipe recipe;
     String recipeName;
 
-
     List<Ingredient> recipeIngredient;
     List<Step> recipeStep;
 
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipe_detail);
 
-
-        View recyclerView2 = findViewById(R.id.recycler_view_step);
-        assert recyclerView2 != null;
-        setupRecyclerView((RecyclerView) recyclerView2);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view_step);
+        assert recyclerView != null;
+        setupRecyclerView(recyclerView);
 
 
         getCallingIntent();
@@ -67,7 +58,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
        recyclerView = (RecyclerView)findViewById(R.id.recycler_view_ingredient);
 
         recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
         Intent intentThatStartedThisActivity = getIntent();
@@ -82,10 +73,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }else{
             Toast.makeText(this, "Data not available", Toast.LENGTH_SHORT).show();
         }
-        recyclerView.setHasFixedSize(true);
+
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
         recyclerView.setAdapter(new IngredientAdapter(getApplicationContext(), recipeIngredient));
-        recyclerView.smoothScrollToPosition(0);
 
         if (findViewById(R.id.item_detail_container) != null) {
 
@@ -93,19 +83,18 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView2) {
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recipe = getIntent().getParcelableExtra("Recipe");
-        String text = getIntent().getStringExtra(RecipeWidget.EXTRA_LABEL);
+
 
         recipeStep = recipe.getSteps();
 
-        recyclerView2.setHasFixedSize(true);
-        recyclerView2.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getApplicationContext());
-        recyclerView2.setLayoutManager(layoutManager2);
-        recyclerView2.addItemDecoration(new SimpleDividerItemDecoration(this));
-        recyclerView2.setAdapter(new StepAdapter(getApplicationContext(), recipeStep));
-        recyclerView2.smoothScrollToPosition(0);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
+        recyclerView.setAdapter(new StepAdapter(getApplicationContext(), recipeStep));
     }
 
     public class StepAdapter extends RecyclerView.Adapter<StepAdapter.MyViewHolder> {

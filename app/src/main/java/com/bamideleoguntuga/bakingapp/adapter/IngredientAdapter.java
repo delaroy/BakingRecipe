@@ -44,14 +44,12 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.My
     @Override
     public void onBindViewHolder(final IngredientAdapter.MyViewHolder viewHolder, int i){
 
-
         viewHolder.ingredient.setText(ingredientList.get(i).getIngredient());
 
         String quantity = Double.toString(ingredientList.get(i).getQuantity());
-        viewHolder.quantity.setText("Quantity: " + quantity);
 
-        viewHolder.measure.setText("Measure: " + ingredientList.get(i).getMeasure());
-
+        String recipeIngredient = quantity + " " + ingredientList.get(i).getMeasure() + " " + ingredientList.get(i).getIngredient();
+        viewHolder.ingredient.setText(recipeIngredient);
 
 
     }
@@ -63,16 +61,14 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.My
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView ingredient, quantity, measure;
+        public TextView ingredient;
 
 
 
         public MyViewHolder(View view){
 
             super(view);
-            ingredient = (TextView) view.findViewById(R.id.ingredient);
-            quantity = (TextView) view.findViewById(R.id.quantity);
-            measure = (TextView) view.findViewById(R.id.measure);
+            ingredient = (TextView) view.findViewById(R.id.recipeIngred);
 
 
             view.setOnClickListener(new View.OnClickListener(){

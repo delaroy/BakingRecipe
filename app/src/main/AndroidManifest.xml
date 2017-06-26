@@ -17,29 +17,54 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetailActivity" />
-        <activity
-            android:name=".RecipeStepActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode" />
 
-        <receiver android:name=".recipewidget.RecipeWidget">
+        <activity android:name=".RecipeDetailActivity" />
+
+        <activity
+            android:name=".RecipeStepActivity"/>
+
+
+        <service
+            android:name=".widget.RecipeWidgetIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".sync.RecipeIntentService"
+            android:exported="false" />
+
+        <provider
+            android:authorities="com.bamideleoguntuga.bakingapp.provider.provider"
+            android:name=".provider.generated.RecipeProvider"
+            android:exported="true"/>
+
+
+        <service
+            android:name=".widget.RecipeWidgetIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".sync.RecipeJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".widget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".widget.RecipeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.bamideleoguntuga.bakinapp.app.ACTION_DATA_UPDATED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/recipe_widget_info" />
+                android:resource="@xml/recipe_widget_provider_info" />
         </receiver>
 
-        <provider
-            android:authorities="com.bamideleoguntuga.bakingapp"
-            android:name="com.bamideleoguntuga.bakingapp.data.MyContentProvider"
-            android:exported="false"></provider>
 
-        <service android:name=".recipewidget.WidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 

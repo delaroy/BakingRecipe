@@ -4,6 +4,7 @@ package com.bamideleoguntuga.bakingapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -28,6 +29,13 @@ public class Recipe implements Parcelable {
     @SerializedName("image")
     @Expose
     private String image;
+
+    public Recipe(Integer id, String name, Integer servings, String image) {
+        this.id = id;
+        this.name = name;
+        this.servings = servings;
+        this.image = image;
+    }
 
     public Integer getId() {
         return id;
@@ -86,8 +94,8 @@ public class Recipe implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.id);
         dest.writeString(this.name);
-        dest.writeTypedList(this.ingredients);
-        dest.writeTypedList(this.steps);
+        dest.writeList(this.ingredients);
+        dest.writeList(this.steps);
         dest.writeValue(this.servings);
         dest.writeString(this.image);
     }
@@ -98,8 +106,10 @@ public class Recipe implements Parcelable {
     protected Recipe(Parcel in) {
         this.id = (Integer) in.readValue(Integer.class.getClassLoader());
         this.name = in.readString();
-        this.ingredients = in.createTypedArrayList(Ingredient.CREATOR);
-        this.steps = in.createTypedArrayList(Step.CREATOR);
+        this.ingredients = new ArrayList<Ingredient>();
+        in.readList(this.ingredients, Ingredient.class.getClassLoader());
+        this.steps = new ArrayList<Step>();
+        in.readList(this.steps, Step.class.getClassLoader());
         this.servings = (Integer) in.readValue(Integer.class.getClassLoader());
         this.image = in.readString();
     }

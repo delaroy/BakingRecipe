@@ -2,13 +2,9 @@ package com.bamideleoguntuga.bakingapp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
@@ -19,32 +15,32 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import com.bamideleoguntuga.bakingapp.adapter.RecipeAdapter;
 import com.bamideleoguntuga.bakingapp.api.Client;
 import com.bamideleoguntuga.bakingapp.api.Service;
-import com.bamideleoguntuga.bakingapp.data.Contract;
-import com.bamideleoguntuga.bakingapp.data.RecipeDBHelper;
 import com.bamideleoguntuga.bakingapp.model.Recipe;
-import com.bamideleoguntuga.bakingapp.recipewidget.RecipeWidget;
-import com.bamideleoguntuga.bakingapp.utility.SimpleIdlingResource;
-import com.google.gson.Gson;
+import com.bamideleoguntuga.bakingapp.sync.RecipeSyncUtils;
+import com.bamideleoguntuga.bakingapp.utilities.JsonUtils;
+import com.bamideleoguntuga.bakingapp.utilities.RecipeTestDownloader;
+import com.bamideleoguntuga.bakingapp.utilities.SimpleIdlingResource;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  RecipeTestDownloader.DelayerCallback  {
 
     private RecyclerView recyclerView;
     ProgressDialog pd;
-    List<Recipe> recipeList;
+    List<Recipe> recipes;
     private static Context mContext;
 
     @Nullable
@@ -68,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         mContext = this;
+        RecipeSyncUtils.initialize(this);
         getIdlingResource();
     }
 
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
+        RecipeSyncUtils.initialize(this);
         loadJSON();
 
     }
@@ -124,25 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 try {
 
                     String recipeString = response.body().toString();
-                   // Log.i("onResponse", recipeString);
+
                     Type listType = new TypeToken<List<Recipe>>() {}.getType();
-                    recipeList = new Gson().fromJson(recipeString, listType);
-                   // Log.i("onResponse", recipeList.toString());
-                    for(int i = 0; i < recipeList.size(); i++){
-                        recipeList.get(i).getName();
-                    }
+                    recipes = JsonUtils.getRecipeListFromJson(recipeString, listType);
 
-                    recyclerView.setAdapter(new RecipeAdapter(getApplicationContext(), recipeList));
+                    recyclerView.setAdapter(new RecipeAdapter(getApplicationContext(), recipes));
                     recyclerView.smoothScrollToPosition(0);
-
-                    for(Recipe recipe : recipeList) {
-                        addRecipe(recipe.getName());
-                        System.out.println(recipe.getName().toString());
-                       // Log.d("Recipe :", recipe.getName());
-                    }
-                    RecipeWidget.sendRefreshBroadcast(mContext);
-
-
 
                 } catch (Exception e) {
                     Log.d("onResponse", "There is an error");
@@ -150,42 +134,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-
-            public void addRecipe(final String s) {
-
-                new AsyncTask<Void, Void, Void>() {
-
-                    @Override
-                    protected Void doInBackground(Void... params) {
-
-                        ContentValues values = new ContentValues();
-                        values.put(Contract.COLUMN_RECIPENAME, s);
-
-                        final Uri uri = mContext.getContentResolver().insert(Contract.PATH_RECIPE_URI, values);
-
-                        MainActivity a = (MainActivity) mContext;
-                        if(uri != null) {
-                            a.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    RecipeWidget.sendRefreshBroadcast(mContext);
-                                }
-                            });
-                        } else {
-                            a.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(mContext, "Something went wrong, task cannot be created.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
-                        return null;
-
-                    }
-                }.execute();
-            }
-
 
             @Override
             public void onFailure(Call<JsonArray> call, Throwable t) {
@@ -198,5 +146,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        RecipeTestDownloader.downloadRecipe(this, MainActivity.this, mIdlingResource);
+    }
+
+    @Override
+    public void onDone(ArrayList<Recipe> recipes) {
+
+    }
 
 }

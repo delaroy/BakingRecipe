@@ -1,15 +1,12 @@
-package com.bamideleoguntuga.bakingapp.utility;
+package com.bamideleoguntuga.bakingapp.utilities;
 
 import android.support.annotation.Nullable;
-
-import com.bumptech.glide.request.ResourceCallback;
 import android.support.test.espresso.IdlingResource;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Created by delaroy on 6/24/17.
- */
+
+
 public class SimpleIdlingResource implements IdlingResource {
 
     @Nullable

@@ -1,12 +1,17 @@
 package com.bamideleoguntuga.bakingapp.api;
 
+import com.bamideleoguntuga.bakingapp.model.Recipe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by delaroy on 6/16/17.
@@ -30,4 +35,5 @@ public class Client {
         }
         return service;
     }
+
 }
