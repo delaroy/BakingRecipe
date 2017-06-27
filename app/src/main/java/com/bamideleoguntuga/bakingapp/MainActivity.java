@@ -1,7 +1,6 @@
 package com.bamideleoguntuga.bakingapp;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Configuration;
@@ -15,9 +14,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 
 import com.bamideleoguntuga.bakingapp.adapter.RecipeAdapter;
+import com.bamideleoguntuga.bakingapp.adapter.TestAdapter;
 import com.bamideleoguntuga.bakingapp.api.Client;
 import com.bamideleoguntuga.bakingapp.api.Service;
 import com.bamideleoguntuga.bakingapp.model.Recipe;
@@ -30,6 +31,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,10 +40,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements  RecipeTestDownloader.DelayerCallback  {
 
-    private RecyclerView recyclerView;
-    ProgressDialog pd;
-    List<Recipe> recipes;
+    private List<Recipe> recipes = new ArrayList<>();
     private static Context mContext;
+    private RecyclerView recyclerView;
 
     @Nullable
     private SimpleIdlingResource mIdlingResource;
@@ -62,10 +63,41 @@ public class MainActivity extends AppCompatActivity implements  RecipeTestDownlo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        initViews();
+        setTitle(R.string.app_name);
+
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        boolean isPhone = getResources().getBoolean(R.bool.is_phone);
+
+        if (isPhone) {
+
+            recyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(layoutManager);
+        } else {
+
+            recyclerView.setHasFixedSize(true);
+            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+            }
+
+        }
+
+
+        RecipeSyncUtils.initialize(this);
+        loadJSON();
+
         mContext = this;
         RecipeSyncUtils.initialize(this);
         getIdlingResource();
+
+        //For testing the recipe collection sorting alphabetically
+        TestAdapter testAdapter = new TestAdapter(LayoutInflater.from(this));
+        recyclerView.setAdapter(testAdapter);
+        testAdapter.setRecipe(recipes);
+
     }
 
     public Activity getActivity(){
@@ -77,35 +109,6 @@ public class MainActivity extends AppCompatActivity implements  RecipeTestDownlo
             context = ((ContextWrapper) context).getBaseContext();
         }
         return null;
-
-    }
-
-    private void initViews(){
-
-        boolean isPhone = getResources().getBoolean(R.bool.is_phone);
-
-        if (isPhone) {
-
-            recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-            recyclerView.setHasFixedSize(true);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-            recyclerView.setLayoutManager(layoutManager);
-        } else {
-
-            recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-            recyclerView.setHasFixedSize(true);
-            if (getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-            }
-
-        }
-
-        RecipeSyncUtils.initialize(this);
-        loadJSON();
 
     }
 
@@ -124,9 +127,11 @@ public class MainActivity extends AppCompatActivity implements  RecipeTestDownlo
 
                     Type listType = new TypeToken<List<Recipe>>() {}.getType();
                     recipes = JsonUtils.getRecipeListFromJson(recipeString, listType);
-
                     recyclerView.setAdapter(new RecipeAdapter(getApplicationContext(), recipes));
-                    recyclerView.smoothScrollToPosition(0);
+
+                    //sorting recipe in alphabetical order which UI test was done upon
+                    Collections.sort(recipes, Recipe.BY_NAME_ALPHABETICAL);
+
 
                 } catch (Exception e) {
                     Log.d("onResponse", "There is an error");
@@ -150,11 +155,11 @@ public class MainActivity extends AppCompatActivity implements  RecipeTestDownlo
     protected void onStart() {
         super.onStart();
         RecipeTestDownloader.downloadRecipe(this, MainActivity.this, mIdlingResource);
+        loadJSON();
     }
 
     @Override
     public void onDone(ArrayList<Recipe> recipes) {
 
     }
-
 }

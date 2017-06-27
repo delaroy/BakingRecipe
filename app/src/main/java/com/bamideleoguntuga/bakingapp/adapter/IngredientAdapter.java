@@ -46,6 +46,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.My
 
         viewHolder.ingredient.setText(ingredientList.get(i).getIngredient());
 
+
         String quantity = Double.toString(ingredientList.get(i).getQuantity());
 
         String recipeIngredient = quantity + " " + ingredientList.get(i).getMeasure() + " " + ingredientList.get(i).getIngredient();
@@ -61,7 +62,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.My
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView ingredient;
+        public TextView ingredient, recipe;
 
 
 
@@ -69,6 +70,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.My
 
             super(view);
             ingredient = (TextView) view.findViewById(R.id.recipeIngred);
+
 
 
             view.setOnClickListener(new View.OnClickListener(){

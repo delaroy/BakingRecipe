@@ -8,9 +8,11 @@
     tools:context="com.bamideleoguntuga.bakingapp.RecipeDetailActivity">
 
 
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,22 +20,27 @@
             android:orientation="vertical">
 
             <TextView
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/recipeIngredient"
-                  android:padding="@dimen/padding_layout"
-                  android:textSize="30sp"
-                  android:text= "INGREDIENTS" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/recipeIngredient"
+                android:padding="@dimen/padding_layout"
+                android:layout_marginTop="40dp"
+                android:textSize="30sp"
+                android:text= "INGREDIENTS"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
-              <android.support.v7.widget.RecyclerView
-                  android:id="@+id/recycler_view_ingredient"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:clipToPadding="false"
-                  android:scrollbars="vertical"
-                  android:name="com.delaroystudios.masterdetail.RecipeDetailFragment"
-                  tools:context="com.bamideleoguntuga.bakingapp.RecipeDetailActivity"
-                  tools:listitem="@layout/recipe_detail_ingredient_item"/> -->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_ingredient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:scrollbars="vertical"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:name="com.delaroystudios.masterdetail.RecipeDetailFragment"
+                tools:context="com.bamideleoguntuga.bakingapp.RecipeDetailActivity"
+                tools:listitem="@layout/recipe_detail_ingredient_item"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -41,7 +48,9 @@
                 android:id="@+id/recipeStep"
                 android:padding="@dimen/padding_layout"
                 android:textSize="30sp"
-                android:text= "STEPS" />
+                android:text= "STEPS"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_step"
@@ -49,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:scrollbars="vertical"
-                android:name="com.delaroystudios.masterdetail.RecipeDetailFragment"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 tools:context="com.bamideleoguntuga.bakingapp.RecipeDetailActivity"
                 tools:listitem="@layout/recipe_detail_step_item"/>
         </LinearLayout>

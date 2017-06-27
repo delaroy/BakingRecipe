@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,33 +29,40 @@ import java.util.List;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<Recipe> recipeList;
+    private List<Recipe> recipeList = new ArrayList<>();
 
 
-    public RecipeAdapter(Context mContext, List<Recipe> objects){
+
+    public RecipeAdapter(Context mContext, List<Recipe> recipeList) {
+        this.recipeList = recipeList;
         this.mContext = mContext;
-        this.recipeList = objects;
     }
 
+
+
+
     @Override
-    public RecipeAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int i){
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.recipe_card, viewGroup, false);
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recipe_card, parent, false);
 
         return new MyViewHolder(view);
     }
 
+
+
     @Override
-    public void onBindViewHolder(final RecipeAdapter.MyViewHolder viewHolder, int i){
-
-
-        viewHolder.title.setText(recipeList.get(i).getName());
-        String thumbnail = recipeList.get(i).getImage();
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Recipe recipe = recipeList.get(position);
+        holder.title.setText(recipe.getName());
+        String thumbnail = recipe.getImage();
 
         Glide.with(mContext)
                 .load(thumbnail)
-                .into(viewHolder.image);
+                .into(holder.image);
+
     }
+
 
     @Override
     public int getItemCount(){
@@ -81,7 +89,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
 
                         Intent intent = new Intent(mContext, RecipeDetailActivity.class);
                         intent.putExtra("Recipe", clickedDataItem);
-
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getName(), Toast.LENGTH_SHORT).show();
                     }

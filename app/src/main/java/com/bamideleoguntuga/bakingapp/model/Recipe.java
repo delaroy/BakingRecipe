@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -36,6 +37,11 @@ public class Recipe implements Parcelable {
         this.servings = servings;
         this.image = image;
     }
+    public static final Comparator<Recipe> BY_NAME_ALPHABETICAL = new Comparator<Recipe>() {
+        @Override public int compare(Recipe lhs, Recipe rhs) {
+            return lhs.name.compareTo(rhs.name);
+        }
+    };
 
     public Integer getId() {
         return id;

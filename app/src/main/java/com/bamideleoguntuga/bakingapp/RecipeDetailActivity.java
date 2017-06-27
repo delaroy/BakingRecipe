@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +22,11 @@ import com.bamideleoguntuga.bakingapp.adapter.IngredientAdapter;
 import com.bamideleoguntuga.bakingapp.model.Ingredient;
 import com.bamideleoguntuga.bakingapp.model.Recipe;
 import com.bamideleoguntuga.bakingapp.model.Step;
-import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,19 +40,23 @@ public class RecipeDetailActivity extends AppCompatActivity {
     Recipe recipe;
     String recipeName;
 
+
     List<Ingredient> recipeIngredient;
     List<Step> recipeStep;
+    private IngredientAdapter mAdapter;
 
-    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipe_detail);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view_step);
-        assert recyclerView != null;
-        setupRecyclerView(recyclerView);
+
+        View recyclerView2 = findViewById(R.id.recycler_view_step);
+        assert recyclerView2 != null;
+        setupRecyclerView((RecyclerView) recyclerView2);
+
+
 
 
         getCallingIntent();
@@ -55,10 +66,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public void getCallingIntent(){
 
 
-       recyclerView = (RecyclerView)findViewById(R.id.recycler_view_ingredient);
+       recyclerView = (RecyclerView) findViewById(R.id.recycler_view_ingredient);
 
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
         Intent intentThatStartedThisActivity = getIntent();
@@ -66,6 +77,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
             recipe = getIntent().getParcelableExtra("Recipe");
             recipeIngredient = recipe.getIngredients();
+            recipeStep = recipe.getSteps();
             recipeName = recipe.getName();
 
             setTitle(recipeName);
@@ -74,8 +86,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Data not available", Toast.LENGTH_SHORT).show();
         }
 
+
+
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
         recyclerView.setAdapter(new IngredientAdapter(getApplicationContext(), recipeIngredient));
+
 
         if (findViewById(R.id.item_detail_container) != null) {
 
@@ -83,25 +98,23 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recipe = getIntent().getParcelableExtra("Recipe");
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView2) {
+        Recipe recipes;
+        recipes = getIntent().getParcelableExtra("Recipe");
+        recipeStep = recipes.getSteps();
 
+        recyclerView2.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getApplicationContext());
+        recyclerView2.setLayoutManager(layoutManager2);
+        recyclerView2.addItemDecoration(new SimpleDividerItemDecoration(this));
+        recyclerView2.setAdapter(new StepAdapter(getApplicationContext(), recipeStep));
 
-        recipeStep = recipe.getSteps();
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
-        recyclerView.setAdapter(new StepAdapter(getApplicationContext(), recipeStep));
     }
 
     public class StepAdapter extends RecyclerView.Adapter<StepAdapter.MyViewHolder> {
 
         private Context mContext;
         private List<Step> recipeStep;
-
 
 
         public StepAdapter(Context mContext, List<Step> recipeStep){
@@ -121,12 +134,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         public void onBindViewHolder(final MyViewHolder viewHolder, int i){
 
             viewHolder.shortDesc.setText(recipeStep.get(i).getShortDescription());
-            String thumbnail = recipeStep.get(i).getThumbnailURL();
-
-            Glide.with(mContext)
-                    .load(thumbnail)
-                    .into(viewHolder.stepImage);
-
 
         }
 
@@ -139,7 +146,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder{
             public TextView shortDesc, desc, videoUrl;
             public final View mView;
-            ImageView stepImage;
 
 
 
@@ -150,7 +156,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 shortDesc = (TextView) view.findViewById(R.id.short_description);
                 desc = (TextView) view.findViewById(R.id.description);
                 videoUrl = (TextView) view.findViewById(R.id.video_url);
-                stepImage = (ImageView) view.findViewById(R.id.stepImage);
 
                 view.setOnClickListener(new View.OnClickListener(){
                     @Override
