@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +40,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private boolean mTwoPane;
     Recipe recipe;
     String recipeName;
-
-
     List<Ingredient> recipeIngredient;
     List<Step> recipeStep;
     private IngredientAdapter mAdapter;
@@ -51,13 +50,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recipe_detail);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         View recyclerView2 = findViewById(R.id.recycler_view_step);
         assert recyclerView2 != null;
         setupRecyclerView((RecyclerView) recyclerView2);
-
-
-
 
         getCallingIntent();
     }

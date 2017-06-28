@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:showDividers="middle"
     android:baselineAligned="false"
@@ -9,12 +8,6 @@
     android:layout_height="match_parent"
     tools:context="com.bamideleoguntuga.bakingapp.RecipeDetailActivity">
 
-
-<!--
-    This layout is a two-pane layout for the Items
-    master/detail flow.
-
-    -->
     <ScrollView
         android:layout_width="@dimen/item_width"
         android:layout_height="wrap_content"
